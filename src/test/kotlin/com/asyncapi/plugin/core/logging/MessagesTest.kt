@@ -15,7 +15,7 @@ class MessagesTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getWitParams")
+    @MethodSource("getWithParams")
     fun get(message: String, key: String, args: Array<String>) {
         Assertions.assertEquals(message, Messages.get(key, *args))
     }
@@ -51,7 +51,7 @@ class MessagesTest {
         )
 
         @JvmStatic
-        fun getWitParams(): Stream<Arguments> = Stream.of(
+        fun getWithParams(): Stream<Arguments> = Stream.of(
             Arguments.of(
                 "[required parameters]: checking",
                 "generation.required-parameters.checking",
