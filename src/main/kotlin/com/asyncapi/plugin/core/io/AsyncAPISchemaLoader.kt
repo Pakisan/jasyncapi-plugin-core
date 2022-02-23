@@ -4,6 +4,7 @@ import com.asyncapi.plugin.core.generator.exception.AsyncAPISchemaGenerationExce
 import com.asyncapi.plugin.core.generator.settings.GenerationSettings
 import com.asyncapi.plugin.core.generator.settings.GenerationSources
 import com.asyncapi.plugin.core.logging.Logger
+import com.asyncapi.plugin.core.logging.Messages
 import com.asyncapi.v2.model.AsyncAPI
 import org.reflections.Reflections
 import org.reflections.scanners.SubTypesScanner
@@ -33,11 +34,15 @@ open class AsyncAPISchemaLoader(
      */
     @Throws(AsyncAPISchemaGenerationException::class)
     open fun load(): Set<Class<*>> {
-        logger.info("schemas loader: looking for schemas")
-        val loadedClasses = loadClasses()
-        val loadedClassesFromPackages = loadedClassesFromPackages()
+        logger.info(Messages.get("generation.find-schemas.search"))
+        val foundSchemas = loadClasses() + loadedClassesFromPackages()
+        if (foundSchemas.isEmpty()) {
+            logger.info(Messages.get("generation.find-schemas.not-found"))
+        } else {
+            logger.info(Messages.get("generation.find-schemas.found", "${foundSchemas.size}"))
+        }
 
-        return loadedClasses + loadedClassesFromPackages
+        return foundSchemas
     }
 
     @Throws(AsyncAPISchemaGenerationException::class)
@@ -45,31 +50,28 @@ open class AsyncAPISchemaLoader(
         val classesToLoad = sources.classes
         val loadedClasses = mutableSetOf<Class<*>>()
 
-        logger.info("[classes]: loading...")
+        logger.info(Messages.get("generation.find-classes.search"))
 
         if (classesToLoad.isEmpty()) {
-            logger.info("[classes]: nothing to load")
+            logger.info(Messages.get("generation.find-classes.not-found"))
 
             return mutableSetOf()
         }
 
-        logger.info("[classes]: loading ${classesToLoad.size} classes")
+        logger.info(Messages.get("generation.find-classes.found", "${classesToLoad.size}"))
 
         classesToLoad.forEach { className ->
-            logger.info("[classes]: loading $className")
+            logger.info(Messages.get("generation.load-classes.loading", className))
             try {
                 loadedClasses.add(sources.classLoader.loadClass(className))
+                logger.info(Messages.get("generation.load-classes.success", className))
             } catch (classNotFoundException: ClassNotFoundException) {
-                logger.error("[classes]: can't load $className - ${classNotFoundException.message}")
+                logger.error(Messages.get("generation.load-classes.failure", className, classNotFoundException.message ?: ""))
                 throw AsyncAPISchemaGenerationException("Can't load class: $className", classNotFoundException)
             }
         }
 
-        if (loadedClasses.isEmpty()) {
-            logger.info("[classes]: no classes loaded")
-        } else {
-            logger.info("[classes]: loaded ${loadedClasses.size} classes")
-        }
+        logger.info(Messages.get("generation.load-classes.loaded", "${loadedClasses.size}"))
 
         return loadedClasses
     }
@@ -79,18 +81,18 @@ open class AsyncAPISchemaLoader(
         val packagesToScan = sources.packages
         val loadedClassesFromPackages = mutableSetOf<Class<*>>()
 
-        logger.info("[packages]: searching...")
+        logger.info(Messages.get("generation.find-packages.search"))
 
         if (packagesToScan.isEmpty()) {
-            logger.info("[packages]: no classes found to load")
+            logger.info(Messages.get("generation.find-packages.not-found"))
 
             return mutableSetOf()
         }
 
-        logger.info("[packages]: scanning ${packagesToScan.size} packages")
+        logger.info(Messages.get("generation.find-packages.found", "${packagesToScan.size}"))
 
         packagesToScan.forEach { packageName ->
-            logger.info("[packages]: scanning $packageName")
+            logger.info(Messages.get("generation.scan-packages.scanning", packageName))
             try {
                 val reflections = Reflections(ConfigurationBuilder()
                         .forPackages(packageName)
@@ -101,21 +103,17 @@ open class AsyncAPISchemaLoader(
                 )
 
                 val foundClasses = reflections.getSubTypesOf(AsyncAPI::class.java)
-                logger.info("[packages]: found ${foundClasses.size} classes in $packageName")
-                foundClasses.map { it.name }.toList().forEach { logger.info(it) }
+                logger.info(Messages.get("generation.scan-packages.found", "${foundClasses.size}"))
+                foundClasses.map { it.name }.toList().forEach { logger.info(Messages.get("generation.scan-packages.class", it)) }
 
                 loadedClassesFromPackages.addAll(foundClasses)
             } catch (exception: Exception) {
-                logger.error("[classes]: can't load classes from $packageName - ${exception.message}")
+                logger.error(Messages.get("generation.scan-packages.failure", packageName, exception.message ?: ""))
                 throw AsyncAPISchemaGenerationException("Can't load classes from: $packageName", exception)
             }
         }
 
-        if (loadedClassesFromPackages.isEmpty()) {
-            logger.info("[packages]: no classes loaded")
-        } else {
-            logger.info("[packages]: loaded ${loadedClassesFromPackages.size} classes")
-        }
+        logger.info(Messages.get("generation.scan-packages.scanned", "${loadedClassesFromPackages.size}"))
 
         return loadedClassesFromPackages
     }
