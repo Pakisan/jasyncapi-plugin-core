@@ -9,6 +9,7 @@ import com.asyncapi.plugin.core.generator.settings.SchemaFileSettings
 import com.asyncapi.plugin.core.generator.strategy.JsonGenerationStrategy
 import com.asyncapi.plugin.core.generator.strategy.YamlGenerationStrategy
 import com.asyncapi.plugin.core.logging.Logger
+import com.asyncapi.plugin.core.logging.Messages
 
 /**
  * AsyncAPI schema generator.
@@ -68,12 +69,14 @@ abstract class AsyncAPISchemaGenerator(
 
     @Throws(IllegalArgumentException::class)
     private fun checkRequiredParameters() {
-        resolveLogger().info("required parameters: checking...")
+        resolveLogger().info(Messages.get("generation.required-parameters.checking"))
         if (classNames.isEmpty() && packageNames.isEmpty()) {
-            resolveLogger().error("required parameters: classNames or packageNames are required")
-            throw IllegalArgumentException("classNames or packageNames are required")
+            Messages.get("generation.required-parameters.failure").let { message ->
+                resolveLogger().error(message)
+                throw IllegalArgumentException(message)
+            }
         }
-        resolveLogger().info("required parameters: ok")
+        resolveLogger().info(Messages.get("generation.required-parameters.success"))
     }
 
     @Throws(IllegalArgumentException::class)
@@ -89,19 +92,21 @@ abstract class AsyncAPISchemaGenerator(
                 schemaFileSettings
         )
 
-        resolveLogger().info("generation strategy: checking...")
+        resolveLogger().info(Messages.get("generation.generation-strategy.checking"))
         return when(schemaFileFormat.toLowerCase()) {
             "json" -> {
-                resolveLogger().info("generation strategy: json")
+                resolveLogger().info(Messages.get("generation.generation-strategy.success", "json"))
                 JsonGenerationStrategy(generationSettings)
             }
             "yaml" -> {
-                resolveLogger().info("generation strategy: yaml")
+                resolveLogger().info(Messages.get("generation.generation-strategy.success", "yaml"))
                 YamlGenerationStrategy(generationSettings)
             }
             else -> {
-                resolveLogger().error("generation strategy: $schemaFileFormat not recognized")
-                throw IllegalArgumentException("schemaFileFormat=$schemaFileFormat not recognized")
+                Messages.get("generation.generation-strategy.failure", schemaFileFormat).let { message ->
+                    resolveLogger().info(message)
+                    throw IllegalArgumentException(message)
+                }
             }
         }
     }
