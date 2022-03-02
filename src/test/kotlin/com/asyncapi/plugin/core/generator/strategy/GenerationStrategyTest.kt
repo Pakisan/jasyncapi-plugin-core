@@ -50,8 +50,9 @@ open class GenerationStrategyTest {
     }
 
     protected fun composeSchemaFileSettings(path: String = DefaultSchemaProperties.filePath,
+                                            format: String,
                                             namePostfix: String = DefaultSchemaProperties.fileNamePostfix): SchemaFileSettings {
-        return SchemaFileSettings(path, namePostfix)
+        return SchemaFileSettings(path, format, namePostfix)
     }
 
     protected fun validateSchemaContent(schema: File, generationRules: GenerationRules, format: String) {

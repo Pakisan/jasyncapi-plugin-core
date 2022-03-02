@@ -23,7 +23,7 @@ class YamlGenerationStrategyTest: GenerationStrategyTest() {
                 logger,
                 composeGenerationSources(classes, packages),
                 composeGenerationRules(),
-                composeSchemaFileSettings(path, namePostfix)
+                composeSchemaFileSettings(path, "yaml", namePostfix)
         )
     }
 
