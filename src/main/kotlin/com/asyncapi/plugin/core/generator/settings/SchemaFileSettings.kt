@@ -14,7 +14,6 @@ import com.asyncapi.plugin.core.DefaultSchemaProperties
  */
 data class SchemaFileSettings(
         val path: String = DefaultSchemaProperties.filePath,
-        @Deprecated("unused", level = DeprecationLevel.WARNING)
-        val format: String,
+        val format: String = DefaultSchemaProperties.fileFormat,
         val namePostfix: String = DefaultSchemaProperties.fileNamePostfix
 )

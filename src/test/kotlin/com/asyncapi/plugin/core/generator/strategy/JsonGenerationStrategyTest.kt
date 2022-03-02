@@ -23,7 +23,7 @@ class JsonGenerationStrategyTest: GenerationStrategyTest() {
                 logger,
                 composeGenerationSources(classes, packages),
                 composeGenerationRules(),
-                composeSchemaFileSettings(path, namePostfix)
+                composeSchemaFileSettings(path, "json", namePostfix)
         )
     }
 
