@@ -4,6 +4,7 @@ import com.asyncapi.plugin.core.generator.exception.AsyncAPISchemaGenerationExce
 import com.asyncapi.plugin.core.generator.settings.GenerationSettings
 import com.asyncapi.plugin.core.io.AsyncAPISchemaLoader
 import com.asyncapi.plugin.core.io.FileSystem
+import com.asyncapi.plugin.core.logging.Messages
 import com.fasterxml.jackson.databind.ObjectMapper
 
 /**
@@ -36,7 +37,10 @@ abstract class GenerationStrategy(
         val schemaFileName = "${schemaClass.simpleName}-${generationSettings.schemaFile.namePostfix}.${generationSettings.schemaFile.format}"
         val schemaFilePath = generationSettings.schemaFile.path
 
-        generationSettings.logger.info("saving ${schemaClass.name} to $schemaFilePath")
+        generationSettings.logger.info(Messages.get(
+            "generation.save-schema",
+            schemaClass.name, schemaFileName, schemaFilePath, "$schemaFilePath/$schemaFileName"
+        ))
         FileSystem.save(schemaFileName, schema, schemaFilePath)
     }
 

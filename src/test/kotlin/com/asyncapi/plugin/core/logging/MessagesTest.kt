@@ -80,7 +80,18 @@ class MessagesTest {
             Arguments.of("      found %s classes:", "generation.scan-packages.found"),
             Arguments.of("        %s", "generation.scan-packages.class"),
             Arguments.of("      can't load classes - %s", "generation.scan-packages.failure"),
-            Arguments.of("  [packages]: %s classes were loaded", "generation.scan-packages.scanned")
+            Arguments.of("  [packages]: %s classes were loaded", "generation.scan-packages.scanned"),
+            /*
+                Schemas: save
+             */
+            Arguments.of("""
+                saving: %s
+                  as: %s
+                  to: %s
+                  path: %s
+                  """.trimIndent(),
+                "generation.save-schema"
+            )
         )
 
         @JvmStatic
@@ -147,7 +158,18 @@ class MessagesTest {
             Arguments.of("      found 10 classes:", "generation.scan-packages.found", arrayOf("10", "20")),
             Arguments.of("        com.asyncapi.schemas.lamps.Lamps", "generation.scan-packages.class", arrayOf("com.asyncapi.schemas.lamps.Lamps", "com.asyncapi.schemas.streetlights.Streetlights")),
             Arguments.of("      can't load classes - com.asyncapi.schemas.lamps.Lamps", "generation.scan-packages.failure", arrayOf("com.asyncapi.schemas.lamps.Lamps", "com.asyncapi.schemas.streetlights.Streetlights")),
-            Arguments.of("  [packages]: 10 classes were loaded", "generation.scan-packages.scanned", arrayOf("10", "20"))
+            Arguments.of("  [packages]: 10 classes were loaded", "generation.scan-packages.scanned", arrayOf("10", "20")),
+            /*
+                Schemas: save
+             */
+            Arguments.of("""
+                saving: com.asyncapi.schemas.streetlights.Streetlights
+                  as: Streetlights-asyncapi.json
+                  to: generated/asyncapi
+                  path: generated/asyncapi/Streetlights-asyncapi.json
+                  """.trimIndent(),
+                "generation.save-schema",
+                arrayOf("com.asyncapi.schemas.streetlights.Streetlights", "Streetlights-asyncapi.json", "generated/asyncapi", "generated/asyncapi/Streetlights-asyncapi.json", "generated/Streetlights-asyncapi.json"))
         )
 
     }
