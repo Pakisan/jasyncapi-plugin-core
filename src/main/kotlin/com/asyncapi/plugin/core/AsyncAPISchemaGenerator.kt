@@ -93,7 +93,7 @@ abstract class AsyncAPISchemaGenerator(
         )
 
         resolveLogger().info(Messages.get("generation.generation-strategy.checking"))
-        return when(schemaFileFormat.toLowerCase()) {
+        return when(schemaFileFormat.lowercase()) {
             "json" -> {
                 resolveLogger().info(Messages.get("generation.generation-strategy.success", "json"))
                 JsonGenerationStrategy(generationSettings)
