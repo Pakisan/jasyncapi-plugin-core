@@ -1,6 +1,7 @@
 plugins {
     java
     kotlin("jvm") version "1.5.10"
+    id("org.jetbrains.kotlinx.kover") version "0.5.0"
 }
 
 group = "com.asyncapi"
@@ -53,3 +54,15 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 //    withJavadocJar()
 //    withSourcesJar()
 //}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlinx:kover:0.5.0")
+    }
+}
+
+apply(plugin = "kover")
