@@ -2,10 +2,12 @@ plugins {
     java
     kotlin("jvm") version "1.5.10"
     id("org.jetbrains.kotlinx.kover") version "0.5.0"
+    `maven-publish`
+    signing
 }
 
 group = "com.asyncapi"
-version = "1.0.0-EAP-1"
+version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -52,6 +54,7 @@ java {
 
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
     }
 
@@ -61,3 +64,62 @@ buildscript {
 }
 
 apply(plugin = "kover")
+
+// Publishing: Maven
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = project.group.toString()
+            artifactId = rootProject.name
+            version = project.version.toString()
+
+            from(components["kotlin"])
+            pom {
+                name.set("AsyncAPI: common logic for plugins.")
+                inceptionYear.set("2020")
+                url.set("https://github.com/asyncapi/jasyncapi")
+                description.set("""
+                    Common logic for plugins.
+                """.trimIndent())
+                organization {
+                    name.set("AsyncAPI Initiative")
+                    url.set("https://www.asyncapi.com/")
+                }
+                developers {
+                    developer {
+                        name.set("Pavel Bodiachevskii")
+                        url.set("https://github.com/Pakisan")
+                    }
+                }
+                licenses {
+                    license {
+                        name.set("Apache License, Version 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
+                        comments.set("A business-friendly OSS license")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/asyncapi/jasyncapi")
+                    connection.set("scm:git:https://github.com/asyncapi/jasyncapi.git")
+                    tag.set("HEAD")
+                }
+                packaging = "jar"
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Pakisan/jasyncapi-plugin-core")
+            credentials {
+                username = project.findProperty("github.packages.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("github.packages.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications["maven"])
+}
