@@ -77,7 +77,7 @@ publishing {
             pom {
                 name.set("AsyncAPI: common logic for plugins.")
                 inceptionYear.set("2020")
-                url.set("https://github.com/asyncapi/jasyncapi")
+                url.set("https://github.com/Pakisan/jasyncapi-plugin-core")
                 description.set("""
                     Common logic for plugins.
                 """.trimIndent())
@@ -100,8 +100,8 @@ publishing {
                     }
                 }
                 scm {
-                    url.set("https://github.com/asyncapi/jasyncapi")
-                    connection.set("scm:git:https://github.com/asyncapi/jasyncapi.git")
+                    url.set("https://github.com/Pakisan/jasyncapi-plugin-core")
+                    connection.set("scm:git:https://github.com/Pakisan/jasyncapi-plugin-core.git")
                     tag.set("HEAD")
                 }
                 packaging = "jar"
