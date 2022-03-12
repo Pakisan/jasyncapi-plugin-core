@@ -7,7 +7,7 @@ import com.asyncapi.plugin.core.logging.Logger
 import com.asyncapi.plugin.core.logging.Messages
 import com.asyncapi.v2.model.AsyncAPI
 import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
+import org.reflections.scanners.Scanners
 import org.reflections.util.ConfigurationBuilder
 import org.reflections.util.FilterBuilder
 import java.net.URLClassLoader
@@ -97,9 +97,9 @@ open class AsyncAPISchemaLoader(
                 val reflections = Reflections(ConfigurationBuilder()
                         .forPackages(packageName)
                         .filterInputsBy(FilterBuilder().includePackage(packageName))
-                        .addScanners(SubTypesScanner(false))
+                        .addScanners(Scanners.SubTypes.filterResultsBy { true })
                         .addUrls((sources.classLoader as URLClassLoader).urLs.asList())
-                        .addClassLoader(sources.classLoader)
+                        .addClassLoaders(sources.classLoader)
                 )
 
                 val foundClasses = reflections.getSubTypesOf(AsyncAPI::class.java)
